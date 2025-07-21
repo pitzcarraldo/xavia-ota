@@ -15,7 +15,7 @@ export default function Dashboard() {
   const fetchData = async () => {
     try {
       const response = await fetch('/api/tracking/all');
-      const data = (await response.json()) as AllTrackingResponse;
+      const data: AllTrackingResponse = await response.json();
 
       setTotalDownloaded(data.trackings.reduce((acc, curr) => acc + curr.count, 0));
 

@@ -44,7 +44,7 @@ export default function ReleasesPage() {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
-  const cancelRef = useRef<HTMLButtonElement>(null);
+  const cancelRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     fetchReleases().catch(console.error);
@@ -56,7 +56,7 @@ export default function ReleasesPage() {
       if (!response.ok) {
         throw new Error('Failed to fetch releases');
       }
-      const data = await response.json();
+      const data = await response.json() as { releases: Release[] };
       setReleases(data.releases);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch releases');
@@ -141,7 +141,7 @@ export default function ReleasesPage() {
                               }}>
                               <AlertDialog
                                 isOpen={isOpen}
-                                leastDestructiveRef={cancelRef}
+                                leastDestructiveRef={cancelRef as any}
                                 onClose={() => {
                                   setIsOpen(false);
                                 }}

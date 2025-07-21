@@ -7,10 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint apiUtils pages",
+    "typecheck": "tsc --noEmit",
     "test": "jest",
     "prepare": "husky",
     "release": "bash ./scripts/release.sh",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
     "@chakra-ui/next-js": "^2.4.2",
@@ -18,17 +23,19 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@google-cloud/storage": "^7.15.2",
+    "@opennextjs/cloudflare": "^1.5.2",
     "@supabase/supabase-js": "^2.46.1",
     "adm-zip": "^0.5.16",
     "form-data": "^4.0.0",
     "formidable": "^3.5.2",
-    "framer-motion": "^11.11.17",
+    "framer-motion": "^12.23.6",
     "mime": "^2.5.2",
     "moment": "^2.30.1",
     "next": "^15.2.4",
     "pg": "^8.13.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "pg-cloudflare": "^1.2.7",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-icons": "^5.3.0",
     "structured-headers": "^0.4.1",
     "winston": "^3.17.0"
@@ -43,7 +50,7 @@
     "@types/jest": "^27.4.1",
     "@types/mime": "^2.0.3",
     "@types/pg": "^8.11.10",
-    "@types/react": "^18.0.1",
+    "@types/react": "^19.0.2",
     "autoprefixer": "^10.4.20",
     "conventional-changelog-cli": "^4.1.0",
     "eslint": "^8.57.0",
@@ -56,6 +63,7 @@
     "prettier": "^3.0.0",
     "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.25.0"
   }
 }
