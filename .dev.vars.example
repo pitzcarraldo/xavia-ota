@@ -1,0 +1,17 @@
+# Environment Configuration
+NEXTJS_ENV=development
+NODE_ENV=development
+
+# Database Configuration
+DB_TYPE=d1
+BLOB_STORAGE_TYPE=r2
+
+# Application Settings
+UPDATE_ENABLED=true
+LOG_LEVEL=debug
+ANALYTICS_ENABLED=false
+
+# Optional: Add any other environment-specific variables
+# EXPO_PUBLIC_KEY=your-development-key
+ADMIN_PASSWORD=admin
+# PRIVATE_KEY_BASE_64=your-base64-encoded-private-key

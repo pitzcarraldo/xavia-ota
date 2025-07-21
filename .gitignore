@@ -51,5 +51,6 @@ code-signing-keys
 # OpenNext
 .open-next
 .wrangler
+wrangler.jsonc
 
 tsconfig.tsbuildinfo

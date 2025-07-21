@@ -1,25 +1,25 @@
 import {
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Text,
-  Heading,
-  Button,
-  Tag,
-  HStack,
-  IconButton,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   AlertDialog,
   AlertDialogBody,
+  AlertDialogContent,
   AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Box,
+  Button,
   Flex,
+  Heading,
+  HStack,
+  IconButton,
+  Table,
+  Tag,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
   Tooltip,
+  Tr,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
@@ -56,7 +56,7 @@ export default function ReleasesPage() {
       if (!response.ok) {
         throw new Error('Failed to fetch releases');
       }
-      const data = await response.json() as { releases: Release[] };
+      const data: { releases: Release[] } = await response.json();
       setReleases(data.releases);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch releases');

@@ -1,11 +1,10 @@
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+import type { NextConfig } from 'next';
 
 // Initialize OpenNext Cloudflare for development
 if (process.env.NODE_ENV === 'development') {
-  void initOpenNextCloudflareForDev();
+  initOpenNextCloudflareForDev();
 }
-
-import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -17,6 +16,7 @@ const nextConfig: NextConfig = {
     '@emotion/use-insertion-effect-with-fallbacks',
     'pg',
     'pg-cloudflare',
+    'isows',
   ],
 };
 

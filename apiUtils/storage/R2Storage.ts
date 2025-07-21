@@ -1,13 +1,17 @@
 import { StorageInterface } from './StorageInterface';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 
 export class R2Storage implements StorageInterface {
   private readonly r2: any; // Using any for now since R2 types are complex
 
   constructor() {
-    if (typeof globalThis === 'undefined' || !(globalThis as any).R2) {
-      throw new Error('R2 binding not found. Make sure R2 is properly bound in wrangler.toml');
+    const env = getCloudflareContext().env;
+    if (typeof env === 'undefined' || !(env as any).DB) {
+      throw new Error(
+        'R2 binding not found. Make sure R2 is properly bound in wrangler.toml or wrangler.jsonc',
+      );
     }
-    this.r2 = (globalThis as any).R2;
+    this.r2 = (env as any).R2;
   }
 
   async uploadFile(path: string, file: Buffer): Promise<string> {

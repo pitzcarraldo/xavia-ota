@@ -18,12 +18,12 @@ export default function Home() {
         body: JSON.stringify({ password }),
       });
 
-      const data = await response.json() as { error?: string };
+      const data: { error?: string } = await response.json();
       if (!response.ok) {
         setError(data.error || 'Login failed');
       } else {
         localStorage.setItem('isAuthenticated', 'true');
-        router.push('/dashboard').catch(console.error);
+        router.push('/dashboard');
       }
     } catch (err) {
       setError('Failed to login');

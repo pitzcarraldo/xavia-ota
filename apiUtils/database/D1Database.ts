@@ -1,3 +1,4 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { DatabaseInterface, Release, Tracking, TrackingMetrics } from './DatabaseInterface';
 import { Tables } from './DatabaseFactory';
 
@@ -5,12 +6,13 @@ export class D1Database implements DatabaseInterface {
   private readonly db: any; // Using any for now since D1 types are complex
 
   constructor() {
-    if (typeof globalThis === 'undefined' || !(globalThis as any).DB) {
+    const env = getCloudflareContext().env;
+    if (typeof env === 'undefined' || !(env as any).DB) {
       throw new Error(
-        'D1 database binding not found. Make sure DB is properly bound in wrangler.toml',
+        'D1 database binding not found. Make sure DB is properly bound in wrangler.toml or wrangler.jsonc',
       );
     }
-    this.db = (globalThis as any).DB;
+    this.db = (env as any).DB;
   }
 
   async getLatestReleaseRecordForRuntimeVersion(runtimeVersion: string): Promise<Release | null> {
