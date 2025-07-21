@@ -23,9 +23,7 @@ export class StorageFactory {
         StorageFactory.instance = new R2Storage();
       } else {
         logger.error('Unsupported storage type', { storageType });
-        throw new Error(
-          `Unsupported storage type: ${storageType}. Supported types: supabase, local, s3, r2`,
-        );
+        throw new Error('Unsupported storage type');
       }
     }
     return StorageFactory.instance;

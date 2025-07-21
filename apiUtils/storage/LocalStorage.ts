@@ -8,7 +8,7 @@ export class LocalStorage implements StorageInterface {
 
   constructor() {
     this.baseDir = path.join(process.cwd(), 'local-releases');
-    this.ensureBaseDir().catch(console.error);
+    this.ensureBaseDir();
   }
 
   private async ensureBaseDir() {

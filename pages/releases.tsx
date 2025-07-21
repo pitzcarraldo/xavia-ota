@@ -44,10 +44,10 @@ export default function ReleasesPage() {
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
-  const cancelRef = useRef<HTMLButtonElement | null>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    fetchReleases().catch(console.error);
+    fetchReleases();
   }, []);
 
   const fetchReleases = async () => {
@@ -201,7 +201,7 @@ export default function ReleasesPage() {
                                           }
 
                                           showToast('Rollback successful', 'success');
-                                          fetchReleases().catch(console.error);
+                                          fetchReleases();
                                           setIsOpen(false);
                                         }}
                                         ml={3}>

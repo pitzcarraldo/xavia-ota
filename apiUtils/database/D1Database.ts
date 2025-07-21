@@ -1,4 +1,4 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { DatabaseInterface, Release, Tracking, TrackingMetrics } from './DatabaseInterface';
 import { Tables } from './DatabaseFactory';
 

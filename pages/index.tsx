@@ -18,9 +18,9 @@ export default function Home() {
         body: JSON.stringify({ password }),
       });
 
-      const data: { error?: string } = await response.json();
+      const data: { error: string } = await response.json();
       if (!response.ok) {
-        setError(data.error || 'Login failed');
+        setError(data.error);
       } else {
         localStorage.setItem('isAuthenticated', 'true');
         router.push('/dashboard');
