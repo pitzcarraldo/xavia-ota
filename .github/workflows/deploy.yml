@@ -67,13 +67,6 @@ jobs:
         run: |
           envsubst < wrangler.tmpl.jsonc > wrangler.deploy.jsonc
 
-      - name: Run D1 migrations
-        uses: cloudflare/wrangler-action@v3
-        with:
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: d1 execute xavia-ota-${{ inputs.environment }}-db --remote --file=migrations/schema.sql --config wrangler.deploy.jsonc
-
       - name: Deploy to Cloudflare Workers
         id: deploy
         env:
