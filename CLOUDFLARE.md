@@ -31,107 +31,131 @@ You can customize the project prefix used in Cloudflare Workers project names an
 
 Each environment uses separate configuration files with environment-specific settings. The project names in `wrangler.toml` files are static and will be automatically updated during deployment by the GitHub Actions workflow.
 
-## Environment-Specific Configuration
+## Configuration Overview
 
-### Environment Configuration Files
+### Dual Configuration Approach
 
-Each environment uses separate configuration files:
+This project uses different configuration approaches for local development and CI/CD deployment:
 
-#### Wrangler Configuration Files
-- `wrangler.jsonc`: Local development configuration (local execution only)
-- `wrangler.dev.jsonc`: Development environment configuration
-- `wrangler.prod.jsonc`: Production environment configuration
+#### Local Development
+- **`wrangler.jsonc`**: Direct configuration file for local development and manual deployment
+- **`.dev.vars`**: Environment variables for local development
 
-#### Environment Variable Files
-- `.dev.vars`: Local development variables
-- `.dev.vars.dev`: Development environment variables
-- `.dev.vars.prod`: Production environment variables
+#### CI/CD Deployment (GitHub Actions)
+- **`wrangler.tmpl.jsonc`**: Template file with variables (`$ENV`, `$D1_DATABASE_ID`)
+- **GitHub Secrets**: Environment-specific database IDs and API tokens
+- **`envsubst`**: Processes template to generate deployment configuration
 
-### Environment-Specific Resource Configuration
+### Configuration Files
 
-#### Local Environment (Local Development Only)
+#### Local Configuration Files
+- `wrangler.jsonc`: Direct wrangler configuration for local development
+- `.dev.vars`: Local environment variables
+
+#### CI/CD Template Files
+- `wrangler.tmpl.jsonc`: Template for GitHub Actions deployment
+- `.dev.vars.dev`: Development environment variables (optional for CI/CD)
+- `.dev.vars.prod`: Production environment variables (optional for CI/CD)
+
+### Local Configuration (wrangler.jsonc)
+
+For local development and manual deployment, the project includes a direct configuration file:
+
 ```jsonc
-// wrangler.jsonc
+// wrangler.jsonc (for local development)
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "livewire-xavia-ota-local",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "livewire-xavia-ota-local"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "livewire-xavia-ota-local-db",  // Uses local SQLite
+      "database_name": "livewire-xavia-ota-local-db",
       "database_id": "local"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "livewire-xavia-ota-local-storage"
-    }
-  ],
-  "vars": {
-    "NODE_ENV": "development",
-    "LOG_LEVEL": "debug",
-    "ADMIN_PASSWORD": "YOUR_ADMIN_PASSWORD"
-  }
-}
-```
-
-**Note**: Local environment uses local SQLite database and local storage, and is not deployed to Cloudflare Workers.
-
-#### Develop Environment
-```jsonc
-// wrangler.dev.jsonc
-{
-  "name": "livewire-xavia-ota-dev",  // Static name, updated during deployment
-  "d1_databases": [
+      "bucket_name": "livewire-xavia-ota-dev-storage"
+    },
     {
-      "binding": "DB",
-      "database_name": "livewire-xavia-ota-dev-db",
-      "database_id": "$DEV_D1_DATABASE_ID"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "R2",
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
       "bucket_name": "livewire-xavia-ota-dev-storage"
     }
-  ],
-  "vars": {
-    "NODE_ENV": "development",
-    "LOG_LEVEL": "debug",
-    "ANALYTICS_ENABLED": "false",
-    "ADMIN_PASSWORD": "YOUR_ADMIN_PASSWORD"
-  }
+  ]
 }
 ```
 
-#### Production Environment
+### CI/CD Template Configuration (wrangler.tmpl.jsonc)
+
+For GitHub Actions deployment, the project uses a template that gets processed during deployment:
+
 ```jsonc
-// wrangler.prod.jsonc
+// wrangler.tmpl.jsonc (for CI/CD deployment)
 {
-  "name": "livewire-xavia-ota-prod",  // Static name, updated during deployment
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "livewire-xavia-ota-$ENV",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2024-12-30",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "livewire-xavia-ota-$ENV"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "livewire-xavia-ota-prod-db",
-      "database_id": "$PROD_D1_DATABASE_ID"
+      "database_name": "livewire-xavia-ota-$ENV-db",
+      "database_id": "$D1_DATABASE_ID"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "livewire-xavia-ota-prod-storage"
+      "bucket_name": "livewire-xavia-ota-$ENV-storage"
+    },
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "livewire-xavia-ota-$ENV-storage"
     }
-  ],
-  "vars": {
-    "NODE_ENV": "production",
-    "LOG_LEVEL": "info",
-    "ANALYTICS_ENABLED": "true",
-    "ADMIN_PASSWORD": "YOUR_ADMIN_PASSWORD"
-  }
+  ]
 }
 ```
 
-**Important**: The project names in `wrangler.jsonc` files are static and will be automatically updated during deployment by the GitHub Actions workflow.
+**Template Variables** (CI/CD only):
+- `$ENV`: Environment name (`dev` or `prod`)
+- `$D1_DATABASE_ID`: Database ID for the specific environment
+
+**Key Features**:
+- **OpenNext Integration**: Uses `.open-next/worker.js` as the main entry point
+- **Assets Binding**: Serves static assets from `.open-next/assets`
+- **Self-Reference Service**: Allows worker to call itself for internal operations
+- **Dual R2 Bindings**: One for general storage (`R2`) and one for Next.js incremental cache (`NEXT_INC_CACHE_R2_BUCKET`)
 
 ## Step 1: Create Cloudflare Resources
 
@@ -229,19 +253,25 @@ npx wrangler deploy --config wrangler.prod.jsonc
 
 ## Step 4: Update Project Configuration
 
-### 4.1 Copy Configuration Files
+### 4.1 Configuration Setup
+
+#### For Local Development
+
+The project already includes these files for local development:
+- `wrangler.jsonc`: Ready-to-use local configuration
+- `.dev.vars`: Local environment variables
+
+#### For CI/CD Deployment Only
 
 ```bash
-# Copy environment variable examples
-cp .dev.vars.example .dev.vars
-cp .dev.vars.example .dev.vars.dev
-cp .dev.vars.example .dev.vars.prod
-
-# Copy wrangler configuration examples
-cp wrangler.jsonc.example wrangler.jsonc
-cp wrangler.jsonc.example wrangler.dev.jsonc
-cp wrangler.jsonc.example wrangler.prod.jsonc
+# Only needed if you want separate environment variable files for CI/CD
+cp .dev.vars.example .dev.vars.dev  # Optional
+cp .dev.vars.example .dev.vars.prod # Optional
 ```
+
+**Note**: 
+- **Local development**: Uses existing `wrangler.jsonc` and `.dev.vars` files directly
+- **CI/CD deployment**: Uses `wrangler.tmpl.jsonc` template with GitHub secrets
 
 ### 4.2 Configure Environment Variables
 
@@ -288,36 +318,79 @@ ANALYTICS_ENABLED=true
 HOST=https://livewire-xavia-ota-prod.livewire-so.workers.dev
 ```
 
-### 4.3 Update Wrangler Configuration Files
+### 4.3 Local vs Remote Configuration
 
-Update each `wrangler.jsonc` file with the appropriate database IDs and bucket names from the previous steps.
+#### Local Development Configuration
 
-**Important**: The project names in `wrangler.jsonc` files are static and will be automatically updated during deployment by the GitHub Actions workflow.
+For local development, update your `wrangler.jsonc` file with actual values:
 
-## Step 5: Environment-Specific Commands
+1. **Update database configuration**: Replace `database_id: "local"` with your actual local D1 database ID if needed
+2. **Update R2 bucket names**: Ensure R2 bucket names match your created buckets
+3. **Update service name**: Ensure the service name in `services` matches the worker name
 
-### 5.1 Local Development (Local Execution Only)
+#### CI/CD Configuration (GitHub Secrets)
+
+For automated deployment, configure the following GitHub secrets:
+
+- `D1_DATABASE_ID_DEV`: Database ID for development environment
+- `D1_DATABASE_ID_PROD`: Database ID for production environment
+- `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare account ID
+- `CLOUDFLARE_API_TOKEN`: Your Cloudflare API token
+
+**Template Processing**: During CI/CD deployment, GitHub Actions uses `envsubst`:
+```bash
+envsubst < wrangler.tmpl.jsonc > wrangler.deploy.jsonc
+```
+
+## Step 5: Local Development and Deployment
+
+### 5.1 Local Development
 
 ```bash
-# Start local development server (runs locally only)
+# Start local development server
+npm run dev
+
+# Or use wrangler for local preview
 npm run preview
 ```
 
-**Note**: Local environment is for development and testing only. It runs on your local machine and is not deployed to Cloudflare Workers.
+### 5.2 Local Manual Deployment
 
-### 5.2 Dev, Prod Environment
+For manual deployment from your local machine:
+
+#### Option 1: Using existing wrangler.jsonc (Recommended for local)
 
 ```bash
-# Preview develop environment
-npm run preview -- --config wrangler.dev.jsonc
-or 
-npm run preview -- --config wrangler.prod.jsonc 
-
-# Deploy to develop environment
-npm run deploy -- --config wrangler.dev.jsonc
-or
-npm run deploy -- --config wrangler.prod.jsonc
+# Update wrangler.jsonc with production/dev values, then deploy
+npm run deploy
 ```
+
+#### Option 2: Using template approach (Similar to CI/CD)
+
+```bash
+# Generate configuration for development environment
+ENV=dev D1_DATABASE_ID=your-dev-db-id envsubst < wrangler.tmpl.jsonc > wrangler.deploy.jsonc
+npm run deploy -- --config wrangler.deploy.jsonc
+
+# Generate configuration for production environment
+ENV=prod D1_DATABASE_ID=your-prod-db-id envsubst < wrangler.tmpl.jsonc > wrangler.deploy.jsonc
+npm run deploy -- --config wrangler.deploy.jsonc
+```
+
+### 5.3 Current Local Configuration
+
+Your current `.dev.vars` file includes:
+```env
+NEXTJS_ENV=development
+NODE_ENV=development
+HOST=http://localhost:8787
+BLOB_STORAGE_TYPE=local
+DB_TYPE=d1
+PRIVATE_KEY_BASE_64='your-private-key-in-base-64'
+ADMIN_PASSWORD=admin
+```
+
+**Recommendation**: Use GitHub Actions workflow for production deployments to ensure consistency.
 
 ## Step 6: GitHub Actions Configuration
 
@@ -326,14 +399,19 @@ npm run deploy -- --config wrangler.prod.jsonc
 Add the following secrets to your GitHub repository settings (`Settings > Secrets and variables > Actions`):
 
 #### Core Cloudflare Secrets
-1. **CLOUDFLARE_API_TOKEN**: Cloudflare API token
-2. **CLOUDFLARE_ACCOUNT_ID**: Cloudflare account ID
+1. **CLOUDFLARE_API_TOKEN**: Cloudflare API token with Workers and D1 permissions
+2. **CLOUDFLARE_ACCOUNT_ID**: Your Cloudflare account ID
+3. **D1_DATABASE_ID_DEV**: D1 database ID for development environment
+4. **D1_DATABASE_ID_PROD**: D1 database ID for production environment
 
-### 6.2 Optional GitHub Variables
+### 6.2 GitHub Actions Workflow
 
-Add the following variables to your GitHub repository settings (`Settings > Secrets and variables > Actions > Variables`):
+The deployment workflow (`deploy.yml`) provides:
 
-1. Additional environment-specific variables as needed
+- **Manual Trigger**: Deploy via workflow dispatch with environment selection
+- **Environment Options**: `prod` (production) and `dev` (development)
+- **Node.js Version**: 22
+- **Build Artifacts**: Uploads build files between jobs for deployment
 
 ### 6.3 Environment URLs
 
@@ -353,17 +431,20 @@ The GitHub Actions workflow provides manual deployment control for develop and p
 - **Node.js Version**: 22
 
 #### Deployment Process
-1. **Build Phase**:
+1. **Build Job** (`build`):
    - Installs dependencies with `npm ci`
    - Builds Next.js application with `npm run build`
    - Builds for Cloudflare Workers with `npm run workers:build`
-   - Uploads build artifacts for deployment phase
+   - Uploads build artifacts (`.open-next/` and `.next/`) for deployment job
 
-2. **Deployment Phase**:
-   - Downloads build artifacts
-   - Updates wrangler configuration for target environment
-   - Runs D1 database migrations
-   - Deploys to Cloudflare Workers with environment-specific settings
+2. **Deploy Job** (`deploy`):
+   - Downloads build artifacts from build job
+   - Generates wrangler configuration using `envsubst < wrangler.tmpl.jsonc > wrangler.deploy.jsonc`
+   - Sets environment variables:
+     - `ENV`: Selected environment (`dev` or `prod`)
+     - `D1_DATABASE_ID`: Environment-specific database ID from secrets
+   - Runs D1 database migrations: `d1 execute livewire-xavia-ota-$ENV-db --remote --file=migrations/schema.sql`
+   - Deploys to Cloudflare Workers: `npm run deploy -- --config wrangler.deploy.jsonc`
 
 #### Manual Deployment Commands
 ```bash
@@ -458,14 +539,14 @@ ANALYTICS_ENABLED=true
 Run migrations for each environment:
 
 ```bash
-# Local environment
-wrangler d1 execute livewire-xavia-ota-db-local --local --file=migrations/schema.sql
+# Local environment (manual local setup)
+wrangler d1 execute livewire-xavia-ota-local-db --local --file=migrations/schema.sql
 
-# Develop environment
-wrangler d1 execute livewire-xavia-ota-db-dev --remote --file=migrations/schema.sql --config wrangler.dev.jsonc
+# Development environment (done automatically by GitHub Actions)
+wrangler d1 execute livewire-xavia-ota-dev-db --remote --file=migrations/schema.sql
 
-# Production environment
-wrangler d1 execute livewire-xavia-ota-db-prod --remote --file=migrations/schema.sql --config wrangler.prod.jsonc
+# Production environment (done automatically by GitHub Actions)
+wrangler d1 execute livewire-xavia-ota-prod-db --remote --file=migrations/schema.sql
 ```
 
 ### Adding New Migrations
@@ -474,28 +555,45 @@ wrangler d1 execute livewire-xavia-ota-db-prod --remote --file=migrations/schema
 2. Apply to each environment:
    ```bash
    # Local
-   wrangler d1 execute livewire-xavia-ota-db-local --local --file=migration-v2.sql
+   wrangler d1 execute livewire-xavia-ota-local-db --local --file=migration-v2.sql
    
-   # Develop
-   wrangler d1 execute livewire-xavia-ota-db-dev --remote --file=migration-v2.sql --config wrangler.dev.jsonc
+   # Development (update deploy.yml to use new migration file)
+   wrangler d1 execute livewire-xavia-ota-dev-db --remote --file=migration-v2.sql
    
-   # Production
-   wrangler d1 execute livewire-xavia-ota-db-prod --remote --file=migration-v2.sql --config wrangler.prod.jsonc
+   # Production (update deploy.yml to use new migration file)
+   wrangler d1 execute livewire-xavia-ota-prod-db --remote --file=migration-v2.sql
    ```
 
-## Environment Configuration Validation
+**Note**: For deployed environments, update the migration file path in `.github/workflows/deploy.yml` to use the new migration file.
 
-Verify each environment's configuration:
+## Configuration Validation
+
+### Local Configuration Validation
+
+Verify your local configuration:
 
 ```bash
-# Local environment
+# Validate local wrangler.jsonc configuration
 npx wrangler dev --dry-run
 
-# Develop environment
-npx wrangler dev --config wrangler.dev.jsonc --dry-run
+# Test local deployment (dry run)
+npx wrangler deploy --dry-run
+```
 
-# Production environment
-npx wrangler dev --config wrangler.prod.jsonc --dry-run
+### CI/CD Template Validation
+
+For validating CI/CD configurations:
+
+```bash
+# Generate and validate development configuration
+ENV=dev D1_DATABASE_ID=your-dev-db-id envsubst < wrangler.tmpl.jsonc > temp-wrangler.jsonc
+npx wrangler deploy --dry-run --config temp-wrangler.jsonc
+rm temp-wrangler.jsonc
+
+# Generate and validate production configuration
+ENV=prod D1_DATABASE_ID=your-prod-db-id envsubst < wrangler.tmpl.jsonc > temp-wrangler.jsonc
+npx wrangler deploy --dry-run --config temp-wrangler.jsonc
+rm temp-wrangler.jsonc
 ```
 
 ## Troubleshooting
