@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "livewire-xavia-ota-$ENV",
+  "name": "your-subdomainxavia-ota-$ENV",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
@@ -14,24 +14,24 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "livewire-xavia-ota-$ENV"
+      "service": "your-subdomainxavia-ota-$ENV"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "livewire-xavia-ota-$ENV-db",
+      "database_name": "your-subdomainxavia-ota-$ENV-db",
       "database_id": "$D1_DATABASE_ID"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "livewire-xavia-ota-$ENV-storage"
+      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "livewire-xavia-ota-$ENV-storage"
+      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
     }
   ]
 }
