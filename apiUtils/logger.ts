@@ -52,11 +52,11 @@ const logger = winston.createLogger({
 
       const msg = `[${moment().utc().format('YYYY-MM-DD HH:mm:ss')}] [${level}] ${padLoggerName(
         '[' + loggerName + ']',
-        60
+        60,
       )} ${logMessage} ${formatMeta(metadata)}`;
 
       return msg;
-    })
+    }),
   ),
   transports: [
     new winston.transports.Console(),

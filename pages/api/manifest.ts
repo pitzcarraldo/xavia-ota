@@ -76,9 +76,8 @@ export default async function manifestEndpoint(req: NextApiRequest, res: NextApi
 
   let updateBundlePath: string;
   try {
-    updateBundlePath = await UpdateHelper.getLatestUpdateBundlePathForRuntimeVersionAsync(
-      runtimeVersion
-    );
+    updateBundlePath =
+      await UpdateHelper.getLatestUpdateBundlePathForRuntimeVersionAsync(runtimeVersion);
   } catch (error: any) {
     if (error instanceof NoUpdateAvailableError) {
       logger.info('No update available for runtime version', { runtimeVersion });
@@ -105,7 +104,7 @@ export default async function manifestEndpoint(req: NextApiRequest, res: NextApi
           updateBundlePath,
           runtimeVersion,
           platform,
-          protocolVersion
+          protocolVersion,
         );
       } else if (updateType === UpdateType.ROLLBACK) {
         logger.info('Rollback is available.');
@@ -143,7 +142,7 @@ async function putUpdateInResponseAsync(
   updateBundlePath: string,
   runtimeVersion: string,
   platform: string,
-  protocolVersion: number
+  protocolVersion: number,
 ): Promise<void> {
   const currentUpdateId = req.headers['expo-current-update-id'];
   const { metadataJson, createdAt, id } = await UpdateHelper.getMetadataAsync({
@@ -176,8 +175,8 @@ async function putUpdateInResponseAsync(
           runtimeVersion,
           platform,
           isLaunchAsset: false,
-        })
-      )
+        }),
+      ),
     ),
     launchAsset: await UpdateHelper.getAssetMetadataAsync({
       updateBundlePath,
@@ -257,7 +256,7 @@ async function putRollBackInResponseAsync(
   req: NextApiRequest,
   res: NextApiResponse,
   updateBundlePath: string,
-  protocolVersion: number
+  protocolVersion: number,
 ): Promise<void> {
   if (protocolVersion === 0) {
     logger.error('Rollbacks not supported on protocol version 0');
@@ -319,7 +318,7 @@ async function putRollBackInResponseAsync(
 async function putNoUpdateAvailableInResponseAsync(
   req: NextApiRequest,
   res: NextApiResponse,
-  protocolVersion: number
+  protocolVersion: number,
 ): Promise<void> {
   if (protocolVersion === 0) {
     throw new Error('NoUpdateAvailable directive not available in protocol version 0');

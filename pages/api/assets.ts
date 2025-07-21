@@ -27,27 +27,26 @@ export default async function assetsEndpoint(req: NextApiRequest, res: NextApiRe
   }
 
   try {
-    const updateBundlePath = await UpdateHelper.getLatestUpdateBundlePathForRuntimeVersionAsync(
-      runtimeVersion as string
-    );
+    const updateBundlePath =
+      await UpdateHelper.getLatestUpdateBundlePathForRuntimeVersionAsync(runtimeVersion);
     const zip = await ZipHelper.getZipFromStorage(updateBundlePath);
 
     const { metadataJson } = await UpdateHelper.getMetadataAsync({
       updateBundlePath,
-      runtimeVersion: runtimeVersion as string,
+      runtimeVersion,
     });
 
     const assetMetadata = metadataJson.fileMetadata[platform].assets.find(
-      (asset: any) => asset.path === assetPath
+      (asset: any) => asset.path === assetPath,
     );
     const isLaunchAsset = metadataJson.fileMetadata[platform].bundle === assetPath;
 
-    const asset = await ZipHelper.getFileFromZip(zip, assetPath as string);
+    const asset = await ZipHelper.getFileFromZip(zip, assetPath);
 
     res.statusCode = 200;
     res.setHeader(
       'content-type',
-      isLaunchAsset ? 'application/javascript' : nullthrows(mime.getType(assetMetadata.ext))
+      isLaunchAsset ? 'application/javascript' : nullthrows(mime.getType(assetMetadata.ext)),
     );
     res.end(asset);
   } catch (error) {

@@ -4,7 +4,7 @@ import { DatabaseInterface, Release, Tracking, TrackingMetrics } from './Databas
 import { Tables } from './DatabaseFactory';
 
 export class SupabaseDatabase implements DatabaseInterface {
-  private supabase;
+  private readonly supabase;
 
   constructor() {
     const supabaseUrl = process.env.SUPABASE_URL;

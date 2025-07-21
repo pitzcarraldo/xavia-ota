@@ -3,8 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { StorageInterface } from './StorageInterface';
 
 export class SupabaseStorage implements StorageInterface {
-  private supabase;
-  private bucketName = process.env.SUPABASE_BUCKET_NAME ?? 'expo-updates';
+  private readonly supabase;
+  private readonly bucketName = process.env.SUPABASE_BUCKET_NAME ?? 'expo-updates';
 
   constructor() {
     const supabaseUrl = process.env.SUPABASE_URL;

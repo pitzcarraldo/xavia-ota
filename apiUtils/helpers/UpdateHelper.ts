@@ -25,7 +25,7 @@ export type GetAssetMetadataArg =
 
 export class UpdateHelper {
   static async getLatestUpdateBundlePathForRuntimeVersionAsync(
-    runtimeVersion: string
+    runtimeVersion: string,
   ): Promise<string> {
     const storage = StorageFactory.getStorage();
     const updatesDirectoryForRuntimeVersion = `updates/${runtimeVersion}`;
@@ -50,7 +50,7 @@ export class UpdateHelper {
     const asset = await ZipHelper.getFileFromZip(zip, arg.filePath);
 
     const assetHash = HashHelper.getBase64URLEncoding(
-      HashHelper.createHash(asset, 'sha256', 'base64')
+      HashHelper.createHash(asset, 'sha256', 'base64'),
     );
     const key = HashHelper.createHash(asset, 'md5', 'hex');
     const keyExtensionSuffix = arg.isLaunchAsset ? 'bundle' : arg.ext;

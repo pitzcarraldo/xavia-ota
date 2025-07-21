@@ -8,7 +8,7 @@ interface CachedZip {
 }
 
 export class ZipHelper {
-  private static zipCache: Map<string, CachedZip> = new Map();
+  private static readonly zipCache: Map<string, CachedZip> = new Map();
   private static readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   static async getZipFromStorage(updateBundlePath: string): Promise<AdmZip> {

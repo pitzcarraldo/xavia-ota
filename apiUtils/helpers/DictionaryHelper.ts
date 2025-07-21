@@ -5,7 +5,7 @@ export class DictionaryHelper {
     return new Map(
       Object.entries(obj).map(([k, v]) => {
         return [k, [v, new Map()]];
-      })
+      }),
     );
   }
 }

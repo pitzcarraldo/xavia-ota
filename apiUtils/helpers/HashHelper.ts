@@ -4,7 +4,7 @@ export class HashHelper {
   static createHash(
     file: Buffer,
     hashingAlgorithm: string,
-    encoding: BinaryToTextEncoding
+    encoding: BinaryToTextEncoding,
   ): string {
     return crypto.createHash(hashingAlgorithm).update(file).digest(encoding);
   }
@@ -16,7 +16,7 @@ export class HashHelper {
   static convertSHA256HashToUUID(value: string): string {
     return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(
       16,
-      20
+      20,
     )}-${value.slice(20, 32)}`;
   }
 

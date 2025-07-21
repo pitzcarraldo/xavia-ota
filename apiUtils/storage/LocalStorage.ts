@@ -4,11 +4,11 @@ import path from 'path';
 import { StorageInterface } from './StorageInterface';
 
 export class LocalStorage implements StorageInterface {
-  private baseDir: string;
+  private readonly baseDir: string;
 
   constructor() {
     this.baseDir = path.join(process.cwd(), 'local-releases');
-    this.ensureBaseDir();
+    this.ensureBaseDir().catch(console.error);
   }
 
   private async ensureBaseDir() {
@@ -33,7 +33,7 @@ export class LocalStorage implements StorageInterface {
 
   async downloadFile(filePath: string): Promise<Buffer> {
     const fullPath = path.join(this.baseDir, filePath);
-    return fs.readFile(fullPath);
+    return await fs.readFile(fullPath);
   }
 
   async fileExists(filePath: string): Promise<boolean> {
@@ -69,7 +69,7 @@ export class LocalStorage implements StorageInterface {
               mimetype: this.getMimeType(path.extname(file)),
             },
           };
-        })
+        }),
       );
       return fileStats;
     } catch {

@@ -3,8 +3,8 @@ import { Storage } from '@google-cloud/storage';
 import { StorageInterface } from './StorageInterface';
 
 export class GCSStorage implements StorageInterface {
-  private storage;
-  private bucketName;
+  private readonly storage;
+  private readonly bucketName;
 
   constructor() {
     if (!process.env.GCP_BUCKET_NAME) {
@@ -21,7 +21,7 @@ export class GCSStorage implements StorageInterface {
     const copyDestination = this.storage.bucket(this.bucketName).file(destinationPath);
     await this.storage.bucket(this.bucketName).file(sourcePath).copy(copyDestination);
     console.log(
-      `gs://${this.bucketName}/${sourcePath} copied to gs://${this.bucketName}/${destinationPath}`
+      `gs://${this.bucketName}/${sourcePath} copied to gs://${this.bucketName}/${destinationPath}`,
     );
   }
 
@@ -29,7 +29,7 @@ export class GCSStorage implements StorageInterface {
     // GCS returns file names as fully qualified paths
     const [files] = await this.storage.bucket(this.bucketName).getFiles({
       prefix: directory,
-      delimiter: directory.charAt(directory.length - 1) === '/' ? '' : '/',
+      delimiter: directory.endsWith('/') ? '' : '/',
     });
 
     // remove directory path from the file name in result

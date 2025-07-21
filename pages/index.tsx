@@ -23,7 +23,7 @@ export default function Home() {
         setError(data.error);
       } else {
         localStorage.setItem('isAuthenticated', 'true');
-        router.push('/dashboard');
+        router.push('/dashboard').catch(console.error);
       }
     } catch (err) {
       setError('Failed to login');
@@ -38,7 +38,9 @@ export default function Home() {
           <Input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             placeholder="Enter admin password"
             size="md"
           />

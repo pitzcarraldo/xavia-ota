@@ -4,7 +4,7 @@ import { DatabaseInterface, Release, Tracking, TrackingMetrics } from './Databas
 import { Tables } from './DatabaseFactory';
 
 export class PostgresDatabase implements DatabaseInterface {
-  private pool: Pool;
+  private readonly pool: Pool;
 
   constructor() {
     this.pool = new Pool({

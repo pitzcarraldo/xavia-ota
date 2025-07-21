@@ -21,7 +21,7 @@ export default function Dashboard() {
 
       const iosData = data.trackings.filter((metric: TrackingMetrics) => metric.platform === 'ios');
       const androidData = data.trackings.filter(
-        (metric: TrackingMetrics) => metric.platform === 'android'
+        (metric: TrackingMetrics) => metric.platform === 'android',
       );
 
       setIosDownloads(iosData.reduce((acc, curr) => acc + curr.count, 0));
@@ -35,7 +35,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData().catch(console.error);
   }, []);
 
   if (isLoading) {

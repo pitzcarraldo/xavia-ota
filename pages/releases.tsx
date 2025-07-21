@@ -47,7 +47,7 @@ export default function ReleasesPage() {
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    fetchReleases();
+    fetchReleases().catch(console.error);
   }, []);
 
   const fetchReleases = async () => {
@@ -101,7 +101,7 @@ export default function ReleasesPage() {
                 <Tbody>
                   {releases
                     .sort(
-                      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+                      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
                     )
                     .map((release, index) => (
                       <Tr key={index}>
@@ -142,7 +142,9 @@ export default function ReleasesPage() {
                               <AlertDialog
                                 isOpen={isOpen}
                                 leastDestructiveRef={cancelRef}
-                                onClose={() => setIsOpen(false)}
+                                onClose={() => {
+                                  setIsOpen(false);
+                                }}
                                 isCentered>
                                 <AlertDialogOverlay>
                                   <AlertDialogContent>
@@ -171,7 +173,11 @@ export default function ReleasesPage() {
                                     </AlertDialogBody>
 
                                     <AlertDialogFooter>
-                                      <Button ref={cancelRef} onClick={() => setIsOpen(false)}>
+                                      <Button
+                                        ref={cancelRef}
+                                        onClick={() => {
+                                          setIsOpen(false);
+                                        }}>
                                         Cancel
                                       </Button>
                                       <Button
@@ -195,7 +201,7 @@ export default function ReleasesPage() {
                                           }
 
                                           showToast('Rollback successful', 'success');
-                                          fetchReleases();
+                                          fetchReleases().catch(console.error);
                                           setIsOpen(false);
                                         }}
                                         ml={3}>
