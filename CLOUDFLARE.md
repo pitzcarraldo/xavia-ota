@@ -22,10 +22,10 @@ Xavia OTA supports three distinct environments:
 
 You can customize the project prefix used in Cloudflare Workers project names and URLs. The default prefix is `env`, but you can change it to any value you prefer.
 
-**URL Pattern**: `https://your-subdomainxavia-ota-{environment}.your-subdomain.workers.dev`
+**URL Pattern**: `https://xavia-ota-{environment}.your-subdomain.workers.dev`
 
 **Examples**:
-- Default: `https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev`
+- Default: `https://xavia-ota-dev.your-subdomain.workers.dev`
 
 ### Environment Configuration
 
@@ -65,7 +65,7 @@ For local development and manual deployment, the project includes a direct confi
 // wrangler.jsonc (for local development)
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "your-subdomainxavia-ota-local",
+  "name": "xavia-ota-local",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
@@ -79,24 +79,24 @@ For local development and manual deployment, the project includes a direct confi
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "your-subdomainxavia-ota-local"
+      "service": "xavia-ota-local"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "your-subdomainxavia-ota-local-db",
+      "database_name": "xavia-ota-local-db",
       "database_id": "local"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "your-subdomainxavia-ota-dev-storage"
+      "bucket_name": "xavia-ota-dev-storage"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "your-subdomainxavia-ota-dev-storage"
+      "bucket_name": "xavia-ota-dev-storage"
     }
   ]
 }
@@ -110,7 +110,7 @@ For GitHub Actions deployment, the project uses a template that gets processed d
 // wrangler.tmpl.jsonc (for CI/CD deployment)
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "your-subdomainxavia-ota-$ENV",
+  "name": "xavia-ota-$ENV",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
@@ -124,24 +124,24 @@ For GitHub Actions deployment, the project uses a template that gets processed d
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "your-subdomainxavia-ota-$ENV"
+      "service": "xavia-ota-$ENV"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "your-subdomainxavia-ota-$ENV-db",
+      "database_name": "xavia-ota-$ENV-db",
       "database_id": "$D1_DATABASE_ID"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
+      "bucket_name": "xavia-ota-$ENV-storage"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
+      "bucket_name": "xavia-ota-$ENV-storage"
     }
   ]
 }
@@ -166,8 +166,8 @@ For GitHub Actions deployment, the project uses a template that gets processed d
 npx wrangler login
 
 # Create databases for develop and production environments only
-npx wrangler d1 create your-subdomainxavia-ota-dev-db
-npx wrangler d1 create your-subdomainxavia-ota-prod-db
+npx wrangler d1 create xavia-ota-dev-db
+npx wrangler d1 create xavia-ota-prod-db
 ```
 
 **Note**: Local environment uses local SQLite database, so no Cloudflare D1 database is needed.
@@ -176,12 +176,12 @@ npx wrangler d1 create your-subdomainxavia-ota-prod-db
 
 After creation, you'll receive output like:
 ```
-✅ Successfully created DB 'your-subdomainxavia-ota-dev-db' in region EEUR
+✅ Successfully created DB 'xavia-ota-dev-db' in region EEUR
 Created your database using D1's new storage backend.
 
 [[d1_databases]]
 binding = "DB"
-database_name = "your-subdomainxavia-ota-dev-db"
+database_name = "xavia-ota-dev-db"
 database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ```
 
@@ -193,13 +193,13 @@ Execute the schema for each environment:
 
 ```bash
 # Local environment (uses local SQLite)
-npx wrangler d1 execute your-subdomainxavia-ota-local-db --local --file=migrations/schema.sql
+npx wrangler d1 execute xavia-ota-local-db --local --file=migrations/schema.sql
 
 # Develop environment
-npx wrangler d1 execute your-subdomainxavia-ota-dev-db --remote --file=migrations/schema.sql --config wrangler.dev.jsonc
+npx wrangler d1 execute xavia-ota-dev-db --remote --file=migrations/schema.sql --config wrangler.dev.jsonc
 
 # Production environment
-npx wrangler d1 execute your-subdomainxavia-ota-prod-db --remote --file=migrations/schema.sql --config wrangler.prod.jsonc
+npx wrangler d1 execute xavia-ota-prod-db --remote --file=migrations/schema.sql --config wrangler.prod.jsonc
 ```
 
 ## Step 2: Create R2 Buckets
@@ -208,8 +208,8 @@ npx wrangler d1 execute your-subdomainxavia-ota-prod-db --remote --file=migratio
 
 ```bash
 # Create R2 buckets for develop and production environments only
-npx wrangler r2 bucket create your-subdomainxavia-ota-dev-storage
-npx wrangler r2 bucket create your-subdomainxavia-ota-prod-storage
+npx wrangler r2 bucket create xavia-ota-dev-storage
+npx wrangler r2 bucket create xavia-ota-prod-storage
 ```
 
 **Note**: Local environment uses local storage, so no Cloudflare R2 bucket is needed.
@@ -233,8 +233,8 @@ Create `r2-cors.json`:
 Apply CORS configuration to each bucket:
 
 ```bash
-npx wrangler r2 bucket cors put your-subdomainxavia-ota-storage-dev --rules r2-cors.json
-npx wrangler r2 bucket cors put your-subdomainxavia-ota-storage-prod --rules r2-cors.json
+npx wrangler r2 bucket cors put xavia-ota-storage-dev --rules r2-cors.json
+npx wrangler r2 bucket cors put xavia-ota-storage-prod --rules r2-cors.json
 ```
 
 ## Step 3: Deploy Workers
@@ -300,7 +300,7 @@ LOG_LEVEL=debug
 ANALYTICS_ENABLED=false
 
 # Develop Environment Settings
-HOST=https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev
+HOST=https://xavia-ota-dev.your-subdomain.workers.dev
 ```
 
 #### Production Environment (.dev.vars.prod)
@@ -315,7 +315,7 @@ ANALYTICS_ENABLED=true
 
 # Project Configuration
 # Production Environment Settings
-HOST=https://your-subdomainxavia-ota-prod.your-subdomain.workers.dev
+HOST=https://xavia-ota-prod.your-subdomain.workers.dev
 ```
 
 ### 4.3 Local vs Remote Configuration
@@ -416,8 +416,8 @@ The deployment workflow (`deploy.yml`) provides:
 ### 6.3 Environment URLs
 
 - **Local**: `http://localhost:8787` (local development only)
-- **Develop**: `https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev`
-- **Production**: `https://your-subdomainxavia-ota-prod.your-subdomain.workers.dev`
+- **Develop**: `https://xavia-ota-dev.your-subdomain.workers.dev`
+- **Production**: `https://xavia-ota-prod.your-subdomain.workers.dev`
 
 ## Step 7: Deploy to Cloudflare Workers
 
@@ -443,7 +443,7 @@ The GitHub Actions workflow provides manual deployment control for develop and p
    - Sets environment variables:
      - `ENV`: Selected environment (`dev` or `prod`)
      - `D1_DATABASE_ID`: Environment-specific database ID from secrets
-   - Runs D1 database migrations: `d1 execute your-subdomainxavia-ota-$ENV-db --remote --file=migrations/schema.sql`
+   - Runs D1 database migrations: `d1 execute xavia-ota-$ENV-db --remote --file=migrations/schema.sql`
    - Deploys to Cloudflare Workers: `npm run deploy -- --config wrangler.deploy.jsonc`
 
 #### Manual Deployment Commands
@@ -456,8 +456,8 @@ gh workflow run deploy.yml -f environment=dev
 ```
 
 #### Environment URLs
-- **Develop**: `https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev`
-- **Production**: `https://your-subdomainxavia-ota-prod.your-subdomain.workers.dev`
+- **Develop**: `https://xavia-ota-dev.your-subdomain.workers.dev`
+- **Production**: `https://xavia-ota-prod.your-subdomain.workers.dev`
 
 **Note**: Local environment is not deployed via GitHub Actions as it runs locally only.
 
@@ -480,8 +480,8 @@ The bindings are applied automatically when you deploy using `wrangler deploy`.
 npx wrangler list
 
 # Get deployment details and logs for each environment
-npx wrangler tail your-subdomainxavia-ota-dev
-npx wrangler tail your-subdomainxavia-ota-prod
+npx wrangler tail xavia-ota-dev
+npx wrangler tail xavia-ota-prod
 ```
 
 ### 9.2 Test Endpoints
@@ -490,12 +490,12 @@ Test your API endpoints for each environment:
 
 ```bash
 # Test develop environment
-curl https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev/api/manifest
-curl https://your-subdomainxavia-ota-dev.your-subdomain.workers.dev/api/releases
+curl https://xavia-ota-dev.your-subdomain.workers.dev/api/manifest
+curl https://xavia-ota-dev.your-subdomain.workers.dev/api/releases
 
 # Test production environment
-curl https://your-subdomainxavia-ota-prod.your-subdomain.workers.dev/api/manifest
-curl https://your-subdomainxavia-ota-prod.your-subdomain.workers.dev/api/releases
+curl https://xavia-ota-prod.your-subdomain.workers.dev/api/manifest
+curl https://xavia-ota-prod.your-subdomain.workers.dev/api/releases
 ```
 
 ## Step 10: Environment-Specific Configuration
@@ -540,13 +540,13 @@ Run migrations for each environment:
 
 ```bash
 # Local environment (manual local setup)
-wrangler d1 execute your-subdomainxavia-ota-local-db --local --file=migrations/schema.sql
+wrangler d1 execute xavia-ota-local-db --local --file=migrations/schema.sql
 
 # Development environment (done automatically by GitHub Actions)
-wrangler d1 execute your-subdomainxavia-ota-dev-db --remote --file=migrations/schema.sql
+wrangler d1 execute xavia-ota-dev-db --remote --file=migrations/schema.sql
 
 # Production environment (done automatically by GitHub Actions)
-wrangler d1 execute your-subdomainxavia-ota-prod-db --remote --file=migrations/schema.sql
+wrangler d1 execute xavia-ota-prod-db --remote --file=migrations/schema.sql
 ```
 
 ### Adding New Migrations
@@ -555,13 +555,13 @@ wrangler d1 execute your-subdomainxavia-ota-prod-db --remote --file=migrations/s
 2. Apply to each environment:
    ```bash
    # Local
-   wrangler d1 execute your-subdomainxavia-ota-local-db --local --file=migration-v2.sql
+   wrangler d1 execute xavia-ota-local-db --local --file=migration-v2.sql
    
    # Development (update deploy.yml to use new migration file)
-   wrangler d1 execute your-subdomainxavia-ota-dev-db --remote --file=migration-v2.sql
+   wrangler d1 execute xavia-ota-dev-db --remote --file=migration-v2.sql
    
    # Production (update deploy.yml to use new migration file)
-   wrangler d1 execute your-subdomainxavia-ota-prod-db --remote --file=migration-v2.sql
+   wrangler d1 execute xavia-ota-prod-db --remote --file=migration-v2.sql
    ```
 
 **Note**: For deployed environments, update the migration file path in `.github/workflows/deploy.yml` to use the new migration file.
@@ -603,8 +603,8 @@ rm temp-wrangler.jsonc
 1. **Build Failures**
    ```bash
    # Check logs for each environment
-   npx wrangler tail your-subdomainxavia-ota-dev
-   npx wrangler tail your-subdomainxavia-ota-prod
+   npx wrangler tail xavia-ota-dev
+   npx wrangler tail xavia-ota-prod
    ```
 
 2. **D1 Connection Issues**
@@ -638,17 +638,17 @@ rm temp-wrangler.jsonc
 npx wrangler pages dev --config wrangler.jsonc --env local
 
 # Database status check for each environment
-npx wrangler d1 execute your-subdomainxavia-ota-db-local --local --command="SELECT name FROM sqlite_master WHERE type='table';"
-npx wrangler d1 execute your-subdomainxavia-ota-db-dev --remote --command="SELECT name FROM sqlite_master WHERE type='table';" --config wrangler.dev.jsonc
-npx wrangler d1 execute your-subdomainxavia-ota-db-prod --remote --command="SELECT name FROM sqlite_master WHERE type='table';" --config wrangler.prod.jsonc
+npx wrangler d1 execute xavia-ota-db-local --local --command="SELECT name FROM sqlite_master WHERE type='table';"
+npx wrangler d1 execute xavia-ota-db-dev --remote --command="SELECT name FROM sqlite_master WHERE type='table';" --config wrangler.dev.jsonc
+npx wrangler d1 execute xavia-ota-db-prod --remote --command="SELECT name FROM sqlite_master WHERE type='table';" --config wrangler.prod.jsonc
 
 # R2 bucket contents for each environment
-npx wrangler r2 object list your-subdomainxavia-ota-storage-dev
-npx wrangler r2 object list your-subdomainxavia-ota-storage-prod
+npx wrangler r2 object list xavia-ota-storage-dev
+npx wrangler r2 object list xavia-ota-storage-prod
 
 # Worker logs for each environment
-npx wrangler tail your-subdomainxavia-ota-dev
-npx wrangler tail your-subdomainxavia-ota-prod
+npx wrangler tail xavia-ota-dev
+npx wrangler tail xavia-ota-prod
 ```
 
 ## Maintenance
@@ -657,10 +657,10 @@ npx wrangler tail your-subdomainxavia-ota-prod
 
 1. **D1 Backup for Each Environment**
    ```bash
-   wrangler d1 backup create your-subdomainxavia-ota-db-dev
-   wrangler d1 backup create your-subdomainxavia-ota-db-prod
-   wrangler d1 backup list your-subdomainxavia-ota-db-dev
-   wrangler d1 backup list your-subdomainxavia-ota-db-prod
+   wrangler d1 backup create xavia-ota-db-dev
+   wrangler d1 backup create xavia-ota-db-prod
+   wrangler d1 backup list xavia-ota-db-dev
+   wrangler d1 backup list xavia-ota-db-prod
    ```
 
 2. **R2 Backup**

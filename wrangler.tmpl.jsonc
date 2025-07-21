@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "your-subdomainxavia-ota-$ENV",
+  "name": "xavia-ota-$ENV",
   "main": ".open-next/worker.js",
   "compatibility_date": "2024-12-30",
   "compatibility_flags": [
@@ -14,24 +14,24 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "your-subdomainxavia-ota-$ENV"
+      "service": "xavia-ota-$ENV"
     }
   ],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "your-subdomainxavia-ota-$ENV-db",
+      "database_name": "xavia-ota-$ENV-db",
       "database_id": "$D1_DATABASE_ID"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
+      "bucket_name": "xavia-ota-$ENV-storage"
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "your-subdomainxavia-ota-$ENV-storage"
+      "bucket_name": "xavia-ota-$ENV-storage"
     }
   ]
 }
