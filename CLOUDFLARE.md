@@ -196,10 +196,10 @@ Execute the schema for each environment:
 npx wrangler d1 execute xavia-ota-local-db --local --file=migrations/schema.sql
 
 # Develop environment
-npx wrangler d1 execute xavia-ota-dev-db --remote --file=migrations/schema.sql --config wrangler.dev.jsonc
+npx wrangler d1 execute xavia-ota-dev-db --remote --file=migrations/schema.sql
 
 # Production environment
-npx wrangler d1 execute xavia-ota-prod-db --remote --file=migrations/schema.sql --config wrangler.prod.jsonc
+npx wrangler d1 execute xavia-ota-prod-db --remote --file=migrations/schema.sql
 ```
 
 ## Step 2: Create R2 Buckets
@@ -233,8 +233,8 @@ Create `r2-cors.json`:
 Apply CORS configuration to each bucket:
 
 ```bash
-npx wrangler r2 bucket cors put xavia-ota-storage-dev --rules r2-cors.json
-npx wrangler r2 bucket cors put xavia-ota-storage-prod --rules r2-cors.json
+npx wrangler r2 bucket cors put xavia-ota-dev-storage --rules r2-cors.json
+npx wrangler r2 bucket cors put xavia-ota-prod-storage --rules r2-cors.json
 ```
 
 ## Step 3: Deploy Workers
@@ -643,7 +643,7 @@ npx wrangler d1 execute xavia-ota-db-dev --remote --command="SELECT name FROM sq
 npx wrangler d1 execute xavia-ota-db-prod --remote --command="SELECT name FROM sqlite_master WHERE type='table';" --config wrangler.prod.jsonc
 
 # R2 bucket contents for each environment
-npx wrangler r2 object list xavia-ota-storage-dev
+npx wrangler r2 object list xavia-ota-dev-storage
 npx wrangler r2 object list xavia-ota-storage-prod
 
 # Worker logs for each environment
