@@ -6,7 +6,7 @@ export class R2Storage implements StorageInterface {
 
   constructor() {
     const env = getCloudflareContext().env;
-    if (typeof env === 'undefined' || !(env as any).DB) {
+    if (typeof env === 'undefined' || !(env as any).R2) {
       throw new Error(
         'R2 binding not found. Make sure R2 is properly bound in wrangler.toml or wrangler.jsonc',
       );

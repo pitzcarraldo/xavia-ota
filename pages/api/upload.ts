@@ -42,7 +42,7 @@ export default async function uploadHandler(req: NextApiRequest, res: NextApiRes
 
     // Store the zipped file as is
     const zipContent = fs.readFileSync(file.filepath);
-    const zipFolder = new AdmZip(file.filepath);
+    const zipFolder = new AdmZip(zipContent);
     const metadataJsonFile = await ZipHelper.getFileFromZip(zipFolder, 'metadata.json');
 
     const updateHash = HashHelper.createHash(metadataJsonFile, 'sha256', 'hex');
