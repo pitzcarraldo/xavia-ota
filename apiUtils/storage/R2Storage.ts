@@ -16,7 +16,6 @@ export class R2Storage implements StorageInterface {
 
   async uploadFile(path: string, file: Buffer): Promise<string> {
     await this.r2.put(path, file);
-    console.log(`r2://${path} uploaded`);
     return path;
   }
 
@@ -83,7 +82,5 @@ export class R2Storage implements StorageInterface {
 
     const data = await sourceObject.arrayBuffer();
     await this.r2.put(destinationPath, data);
-
-    console.log(`r2://${sourcePath} copied to r2://${destinationPath}`);
   }
 }

@@ -25,7 +25,7 @@ export class ZipHelper {
     return zip;
   }
 
-  static async getFileFromZip(zip: AdmZip, filePath: string): Promise<Buffer> {
+  static getFileFromZip(zip: AdmZip, filePath: string): Buffer {
     const entries = zip.getEntries();
     const entry = entries.find((entry) => entry.entryName === filePath);
     if (!entry) throw new Error(`File not found in zip: ${filePath}`);

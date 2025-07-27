@@ -55,3 +55,4 @@ code-signing-keys
 wrangler.jsonc
 
 tsconfig.tsbuildinfo
+.claude
